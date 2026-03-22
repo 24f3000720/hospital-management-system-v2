@@ -1,0 +1,364 @@
+<script setup>
+import { reactive } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+
+import { projectMeta } from '../constants/projectMeta'
+import { createDoctor } from '../services/adminService'
+
+const form = reactive({
+  doctor_name: '',
+  doctor_email: '',
+  doctor_password: '',
+  doctor_dept: '',
+  doctor_specialization: '',
+  experience_years: '',
+})
+
+const router = useRouter()
+
+async function handleSubmit() {
+  if (
+    !form.doctor_name.trim() ||
+    !form.doctor_email.trim() ||
+    !form.doctor_password ||
+    !form.doctor_dept.trim() ||
+    !form.doctor_specialization.trim()
+  ) {
+    window.alert('Please fill in all doctor account details.')
+    return
+  }
+
+  try {
+    await createDoctor({
+      name: form.doctor_name,
+      email: form.doctor_email,
+      password: form.doctor_password,
+      department: form.doctor_dept,
+      specialization: form.doctor_specialization,
+      experience_years: Number(form.experience_years || 0),
+    })
+
+    window.alert('Doctor account created successfully.')
+    await router.push({ name: 'admin' })
+  } catch (error) {
+    window.alert(error.message || 'Unable to create doctor account.')
+  }
+}
+</script>
+
+<template>
+  <div class="auth-page">
+    <div class="container">
+      <div class="left">
+        <div class="sidebar-header">{{ projectMeta.title }}</div>
+
+        <div class="sidebar-footer">
+          <div>
+            <div class="builder-label">Built by</div>
+            <div class="builder-name">{{ projectMeta.builder }}</div>
+          </div>
+          <div class="project-purpose">
+            {{ projectMeta.purpose }}
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="right">
+        <div class="create-container">
+          <h2>Create a New Doctor Account</h2>
+          <form @submit.prevent="handleSubmit">
+            <div class="form-group">
+              <input
+                v-model.trim="form.doctor_name"
+                type="text"
+                name="doctor_name"
+                placeholder="Full Name"
+                minlength="2"
+                maxlength="120"
+                required
+              >
+            </div>
+            <div class="form-group">
+              <input
+                v-model.trim="form.doctor_email"
+                type="email"
+                name="doctor_email"
+                placeholder="Email Address"
+                autocomplete="email"
+                maxlength="120"
+                required
+              >
+            </div>
+            <div class="form-group">
+              <input
+                v-model="form.doctor_password"
+                type="password"
+                name="doctor_password"
+                placeholder="Password"
+                autocomplete="new-password"
+                minlength="6"
+                maxlength="120"
+                required
+              >
+            </div>
+            <div class="form-group">
+              <input
+                v-model.trim="form.doctor_dept"
+                type="text"
+                name="doctor_dept"
+                placeholder="Department (e.g. Cardiology)"
+                minlength="2"
+                maxlength="120"
+                required
+              >
+            </div>
+            <div class="form-group">
+              <input
+                v-model.trim="form.doctor_specialization"
+                type="text"
+                name="doctor_specialization"
+                placeholder="Specialization (e.g. Surgeon)"
+                minlength="2"
+                maxlength="120"
+                required
+              >
+            </div>
+            <div class="form-group">
+              <input
+                v-model="form.experience_years"
+                type="number"
+                name="experience_years"
+                placeholder="Years of Experience"
+                min="0"
+                max="80"
+                required
+              >
+            </div>
+
+            <button type="submit" class="submit-button">Create Doctor</button>
+          </form>
+          <RouterLink to="/admin" class="back-btn">Back to Dashboard</RouterLink>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+.auth-page {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+  color: #000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  min-height: 100vh;
+  user-select: none;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  margin: 0;
+  background: white;
+  position: relative;
+}
+
+.left {
+  width: 25%;
+  padding: 1.5rem;
+  box-sizing: border-box;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.sidebar-header {
+  font-size: 1.2rem;
+  font-weight: 500;
+  text-align: left;
+  margin: 0;
+  line-height: 1.2;
+  color: #000;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.builder-label {
+  font-size: 0.8rem;
+  color: #666;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.builder-name {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #000;
+  margin-bottom: 0.5rem;
+}
+
+.project-purpose {
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+}
+
+.divider {
+  width: 1px;
+  background: #e5e7eb;
+  flex-shrink: 0;
+}
+
+.right {
+  flex: 1;
+  box-sizing: border-box;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+form {
+  display: block;
+  width: 100%;
+}
+
+.create-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0;
+  max-width: 420px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.create-container h2 {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.5rem;
+  font-weight: 500;
+  text-align: left;
+  width: 100%;
+  line-height: 1.2;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'] {
+  padding: 0.8rem 1rem;
+  border: 1.5px solid rgb(0 0 0 / 25%);
+  background: white;
+  border-radius: 1rem;
+  font-size: 1rem;
+  color: #000000;
+  outline: none;
+  transition: border-color 0.5s;
+  font-weight: 400;
+  box-sizing: border-box;
+  width: 100%;
+  font-family: inherit;
+}
+
+input:focus {
+  border-color: #005eff;
+}
+
+input::placeholder {
+  color: rgb(0 0 0 / 50%);
+  font-size: 1rem;
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.submit-button,
+.back-btn {
+  width: 100%;
+  border: none;
+  padding: 0.8rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  border-radius: 10rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  box-sizing: border-box;
+  line-height: 1.2;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+}
+
+.submit-button {
+  background: #005eff;
+  color: white;
+}
+
+.submit-button:hover {
+  background: #0046c0;
+}
+
+.back-btn {
+  background: #e7f1ff;
+  color: #005eff;
+}
+
+.back-btn:hover {
+  background: #d0e4ff;
+}
+
+@media (max-width: 900px) {
+  .container {
+    flex-direction: column;
+  }
+
+  .left {
+    width: 100%;
+    height: auto;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .sidebar-footer {
+    margin-top: 1.5rem;
+  }
+
+  .divider {
+    display: none;
+  }
+
+  .right {
+    height: auto;
+    min-height: 60vh;
+    padding: 1.5rem;
+  }
+}
+</style>

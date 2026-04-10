@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  title: Local Hospital Management System API
+  description: Comprehensive API documentation for the Local Hospital Management System v2 (Flask Backend).
+  version: 2.0.0
+servers:
+  - url: http://127.0.0.1:5000/api
+    description: Local Development Server
+
+components:
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Enter the token as `Bearer <token>`
+
+security:
+  - TokenAuth: []
+
+paths:
+  /health:
+    get:
+      summary: Check system health
+      responses:
+        '200':
+          description: System is healthy
+
+  /auth/register:
+    post:
+      summary: Register a new patient
+      security: []
+      responses:
+        '201':
+          description: User successfully registered
+        '400':
+          description: Bad request (validation error)
+
+  /auth/login:
+    post:
+      summary: Authenticate user and get token
+      security: []
+      responses:
+        '200':
+          description: Login successful, returns auth token
+        '401':
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      summary: Logout the current user
+      responses:
+        '200':
+          description: Successfully logged out
+
+  /auth/me:
+    get:
+      summary: Get details of the currently authenticated user
+      responses:
+        '200':
+          description: User details
+
+  /departments:
+    get:
+      summary: Get all departments
+      security: []
+      responses:
+        '200':
+          description: List of departments
+
+  /doctors:
+    get:
+      summary: Get list of doctors
+      security: []
+      responses:
+        '200':
+          description: List of doctors
+
+  /doctors/{uid}:
+    get:
+      summary: Get specific doctor details
+      parameters:
+        - in: path
+          name: uid
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Doctor details
+
+  /patient/profile:
+    get:
+      summary: Get patient profile
+    put:
+      summary: Update patient profile
+
+  /patient/appointments:
+    get:
+      summary: List patient appointments
+    post:
+      summary: Book a new appointment
+
+  /patient/appointments/{aid}/reschedule:
+    put:
+      summary: Reschedule an appointment
+      parameters:
+        - in: path
+          name: aid
+          required: true
+          schema:
+            type: integer
+
+  /patient/appointments/{aid}/cancel:
+    post:
+      summary: Cancel an appointment
+      parameters:
+        - in: path
+          name: aid
+          required: true
+          schema:
+            type: integer
+
+  /patient/payments:
+    get:
+      summary: View patient payments
+    post:
+      summary: Process a new payment
+
+  /doctor/profile:
+    get:
+      summary: Get doctor profile
+    put:
+      summary: Update doctor profile
+
+  /doctor/availability:
+    get:
+      summary: Get doctor availability slots
+    put:
+      summary: Update availability slots
+
+  /doctor/appointments:
+    get:
+      summary: Get doctor's scheduled appointments
+
+  /doctor/appointments/{aid}/complete:
+    put:
+      summary: Mark an appointment as completed
+      parameters:
+        - in: path
+          name: aid
+          required: true
+          schema:
+            type: integer
+
+  /doctor/patients/{patient_uid}/history:
+    get:
+      summary: View history of a specific patient
+      parameters:
+        - in: path
+          name: patient_uid
+          required: true
+          schema:
+            type: integer
+
+  /admin/stats:
+    get:
+      summary: Get platform basic statistics
+
+  /admin/analytics:
+    get:
+      summary: Get detailed platform analytics
+
+  /admin/doctors:
+    get:
+      summary: List all doctors
+    post:
+      summary: Create a new doctor user
+
+  /admin/users/{uid}:
+    get:
+      summary: View user details
+    put:
+      summary: Update user details
+
+  /admin/users/{uid}/blacklist:
+    put:
+      summary: Blacklist or un-blacklist a user

@@ -67,6 +67,12 @@ Part wise breakdown of AI usage and their purposes in the project:
 
 ---
 
+## Video Presentation
+
+https://drive.google.com/file/d/1b6JqLnhit3nh6vnuZ-BXIFczCG1-DB_P/view?usp=share_link
+
+---
+
 ## How to Run
 
 ### Step 1: Redis Server Setup
